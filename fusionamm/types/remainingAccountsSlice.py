@@ -1,0 +1,51 @@
+import borsh_construct as borsh
+import typing
+from construct import Container
+from dataclasses import dataclass
+from . import accountsType
+
+class RemainingAccountsSliceJSON(typing.TypedDict):
+    accountsType: accountsType.AccountsTypeJSON
+    length: int
+
+@dataclass
+class RemainingAccountsSlice:
+    layout: typing.ClassVar = borsh.CStruct(
+        "accountsType" /accountsType.layout,
+        "length" /borsh.U8,
+        )
+    #fields
+    accountsType: accountsType.AccountsTypeKind
+    length: int
+    
+    @classmethod
+    def from_decoded(cls, obj: Container) -> "RemainingAccountsSlice":
+        return cls(
+        accountsType=accountsType.from_decoded(obj["accountsType"]),
+        length=obj["length"],
+        )
+
+    def to_encodable(self) -> dict[str, typing.Any]:
+        return {
+                "accountsType": self.accountsType.to_encodable(),
+                "length": self.length,
+                }
+
+    def to_json(self) -> RemainingAccountsSliceJSON:
+        return {
+                "accountsType": self.accountsType.to_json(),
+                "length": self.length,
+                }
+
+    @classmethod
+    def from_json(cls, obj: RemainingAccountsSliceJSON) -> "RemainingAccountsSlice":
+        return cls(
+                accountsType=accountsType.from_json(obj["accountsType"]),
+                length=obj["length"],
+        )
+
+
+
+
+
+
